@@ -2,9 +2,12 @@ import React from 'react';
 import { Button, Checkbox, Form, Input, notification } from 'antd';
 import { loginApi } from '../util/api';
 import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../components/context/auth.context';
 
 const LoginPage = () => {
     const navigate = useNavigate();
+    const {setAuth} = useContext(AuthContext);
     const onFinish = async (values) => {
         const { email, password } = values;
         const res = await loginApi(email, password);
@@ -15,7 +18,14 @@ const LoginPage = () => {
                 message: "LOGIN USER",
                 description: "Success"
             })
-           navigate("/")       //neu thanh cong chuyen huong home /
+            setAuth({
+                isAuthenticated: true,
+                user: {
+                    email: res?.user?.email ?? "",
+                    name: res?.user?.name ?? ""
+                }
+            })
+            navigate("/")       //neu thanh cong chuyen huong home /
         }else {
             notification.error({
                 message: "LOGIN USER",
